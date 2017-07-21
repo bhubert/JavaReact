@@ -4,4 +4,21 @@
 
 <web-app>
   <display-name>Example React Java Web Application</display-name>
+
+  <servlet>
+    <servlet-name>webpack</servlet-name>
+    <servlet-class>org.mitre.dsmiley.httpproxy.ProxyServlet</servlet-class>
+    <init-param>
+      <param-name>targetUri</param-name>
+      <param-value>http://localhost:9090/assets</param-value>
+    </init-param>
+    <init-param>
+      <param-name>log</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>webpack</servlet-name>
+    <url-pattern>/assets/*</url-pattern>
+  </servlet-mapping>
 </web-app>

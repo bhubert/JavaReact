@@ -14,19 +14,6 @@
         <finalName>JavaReact</finalName>
 
         <plugins>
-            <plugin>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>maven-jetty-plugin</artifactId>
-                <version>6.1.26</version>
-                <configuration>
-                    <connectors>
-                        <connector implementation="org.mortbay.jetty.bio.SocketConnector">
-                            <port>8080</port>
-                        </connector>
-                    </connectors>
-                    <overrideWebXml>dev_override_web.xml</overrideWebXml>
-                </configuration>
-            </plugin>
 
             <plugin>
                 <groupId>com.github.eirslett</groupId>
@@ -72,18 +59,12 @@
                         </goals>
                         <configuration>
                             <source><![CDATA[
-                                /*
-                                 * If running in Jetty - compile jsx files when they change
-                                 * Otherwise just compile them once
-                                 */
-                                boolean isJettyRun = false
-                                List<String> goals = session.getGoals()
-                                for (String s : goals)
-                                    if (s.equals('jetty:run'))
-                                        isJettyRun = true
-
-                                if (isJettyRun) {
+                                boolean isLiveDeploy = session.getUserProperties().getProperty('liveDeploy') != null
+                                if (isLiveDeploy) {
                                     def proc_webpack = new ProcessBuilder(["node/node", "node_modules/webpack-dev-server/bin/webpack-dev-server.js", "--inline", "--hot", "--stdin", "--port", "9090"]).inheritIO().directory(project.getBasedir()).start()
+                                    while (1==1){
+                                            sleep(10000)
+                                        }
                                 } else {
                                     println "Compiling client code..."
                                     def webpack = new ProcessBuilder(["node/node", "node_modules/webpack/bin/webpack.js", "-p", "--progress", "--bail"]).inheritIO().directory(project.getBasedir())
@@ -92,7 +73,7 @@
                                     def proc_webpack = webpack.start()
                                     proc_webpack.waitForOrKill(120000)
                                     if(proc_webpack.exitValue() != 0)
-                                        throw new org.apache.maven.plugin.MojoFailureException("Error compiling clinet code")
+                                        throw new org.apache.maven.plugin.MojoFailureException("Error compiling client code")
                                 }
                                 ]]></source>
                         </configuration>
